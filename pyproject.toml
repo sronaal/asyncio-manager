@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "asyncio-manager"
 version = "1.0.0"
-description = "Cliente AMI (Asterisk Manager Interface) asíncrono moderno para Python 3.10+"
+description = "Modern async Asterisk Manager Interface (AMI) client for Python 3.10+"
 readme = "README.md"
 license = {text = "MIT"}
-keywords = ["asterisk", "ami", "async", "asyncio", "manager"]
+keywords = ["asterisk", "ami", "async", "asyncio", "manager", "telephony"]
 authors = [
-    {name = "asyncio-manager Team"},
+    {name = "Ronal Sánchez"},
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -23,6 +23,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Communications :: Telephony",
     "Framework :: AsyncIO",
+    "Typing :: Typed",
 ]
 requires-python = ">=3.10"
 dependencies = []
@@ -43,15 +44,21 @@ docs = [
 ]
 
 [project.urls]
-homepage = "https://github.com/anomalyco/asyncio-manager"
-repository = "https://github.com/anomalyco/asyncio-manager"
-documentation = "https://asyncio-manager.readthedocs.io"
+homepage = "https://github.com/sronaal/asyncio-manager"
+repository = "https://github.com/sronaal/asyncio-manager"
+documentation = "https://github.com/sronaal/asyncio-manager"
 
 [project.scripts]
 asyncio-manager = "asyncio_manager.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["asyncio_manager*"]
+
+[tool.setuptools.package-data]
+asyncio_manager = ["py.typed"]
+
+[tool.setuptools.exclude-package-data]
+"*" = []
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
