@@ -12,7 +12,7 @@ múltiples eventos seguidos de un evento ``*Complete``.
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from asyncio_manager.message import Message
 from asyncio_manager.utils import CaseInsensitiveDict, EOL, IdGenerator
@@ -56,13 +56,25 @@ class Action:
 
         self._headers["ActionID"] = self._action_id
 
-        # Future para la respuesta principal
-        self._future: asyncio.Future[Message] = asyncio.get_running_loop().create_future()
+        # Future para la respuesta principal (creación lazy)
+        self._future: asyncio.Future[Message] | None = None
 
         # Soporte para EventList
         self._as_list: bool = as_list
         self._messages: List[Message] = []
-        self._event_complete: asyncio.Event = asyncio.Event()
+        self._event_complete: asyncio.Event | None = None
+
+    def _get_future(self) -> asyncio.Future[Message]:
+        """Obtiene o crea el Future interno (lazy initialization)."""
+        if self._future is None:
+            self._future = asyncio.get_running_loop().create_future()
+        return self._future
+
+    def _get_event_complete(self) -> asyncio.Event:
+        """Obtiene o crea el Event de completitud (lazy initialization)."""
+        if self._event_complete is None:
+            self._event_complete = asyncio.Event()
+        return self._event_complete
 
     @property
     def action_id(self) -> str:
@@ -90,6 +102,8 @@ class Action:
         Returns:
             ``True`` si el Future principal ya está resuelto.
         """
+        if self._future is None:
+            return False
         return self._future.done()
 
     @property
@@ -112,15 +126,17 @@ class Action:
         """
         self._messages.append(message)
 
+        future = self._get_future()
+
         if self._as_list:
             # En modo EventList, esperamos el evento Complete
             if message.is_complete_event:
-                self._future.set_result(message)
-                self._event_complete.set()
+                future.set_result(message)
+                self._get_event_complete().set()
         else:
             # Modo normal: la primera respuesta completa la acción
-            if not self._future.done():
-                self._future.set_result(message)
+            if not future.done():
+                future.set_result(message)
 
     def set_exception(self, exception: Exception) -> None:
         """Marca la acción como fallida con una excepción.
@@ -128,8 +144,9 @@ class Action:
         Args:
             exception: Excepción que causó el fallo.
         """
-        if not self._future.done():
-            self._future.set_exception(exception)
+        future = self._get_future()
+        if not future.done():
+            future.set_exception(exception)
 
     async def wait(self, timeout: Optional[float] = None) -> Message:
         """Espera la respuesta principal de la acción.
@@ -147,9 +164,10 @@ class Action:
         Raises:
             TimeoutError: Si se agota el tiempo de espera.
         """
+        future = self._get_future()
         try:
             return await asyncio.wait_for(
-                asyncio.shield(self._future),
+                asyncio.shield(future),
                 timeout=timeout,
             )
         except asyncio.TimeoutError:
@@ -175,7 +193,7 @@ class Action:
 
         if self._as_list:
             await asyncio.wait_for(
-                asyncio.shield(self._event_complete.wait()),
+                asyncio.shield(self._get_event_complete().wait()),
                 timeout=timeout,
             )
 
@@ -183,6 +201,8 @@ class Action:
 
     def cancel(self) -> None:
         """Cancela la acción pendiente."""
+        if self._future is None:
+            return
         if not self._future.done():
             self._future.cancel()
 
@@ -207,5 +227,5 @@ class Action:
     def __repr__(self) -> str:
         return (
             f"<Action {self._headers.get('Action', 'Unknown')} "
-            f"id={self._action_id} done={self._future.done()}>"
+            f"id={self._action_id} done={self.done}>"
         )

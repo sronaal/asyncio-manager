@@ -82,10 +82,16 @@ class CaseInsensitiveDict(MutableMapping):
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, CaseInsensitiveDict):
-            return dict(self.items()) == dict(other.items())
+            return dict(self.lower_items()) == dict(other.lower_items())
         if isinstance(other, dict):
-            return dict(self.items()) == other
+            other_ci = CaseInsensitiveDict(other)
+            return dict(self.lower_items()) == dict(other_ci.lower_items())
         return NotImplemented
+
+    def lower_items(self):
+        """Itera sobre pares (clave en minúsculas, valor)."""
+        for k, (_, v) in self._store.items():
+            yield k, v
 
     def __repr__(self) -> str:
         items = ", ".join(f"{k!r}: {v!r}" for k, v in self.items())
@@ -203,6 +209,10 @@ def agi_code_check(code: int, result: str, line: str) -> str:
     if code == 100:
         return result
     elif code == 200:
+        if result.startswith("-"):
+            raise AGIAppError(f"App error: {line}")
+        if result == "hangup":
+            raise AGIResultHangup(f"Channel hangup: {line}")
         return result
     elif code == 510:
         raise AGIInvalidCommand(f"Invalid command: {line}")

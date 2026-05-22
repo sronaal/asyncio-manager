@@ -89,6 +89,8 @@ class TestActionLifecycle:
     async def test_cancel(self):
         """Cancelar la acción."""
         action = Action({"Action": "Ping"})
+        # Acceder al future para que se cree (lazy init)
+        action._get_future()
         action.cancel()
         assert action.done
 

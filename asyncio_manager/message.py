@@ -46,7 +46,7 @@ class Message(CaseInsensitiveDict):
         Returns:
             ``True`` si el mensaje contiene la clave ``Response``.
         """
-        return "Response" in self._store
+        return "response" in self._store
 
     @property
     def is_event(self) -> bool:
@@ -55,7 +55,7 @@ class Message(CaseInsensitiveDict):
         Returns:
             ``True`` si el mensaje contiene la clave ``Event``.
         """
-        return "Event" in self._store
+        return "event" in self._store
 
     @property
     def is_success(self) -> bool:

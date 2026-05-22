@@ -4,7 +4,7 @@ Usa mocking para simular el protocolo sin conexión real a Asterisk.
 """
 
 import asyncio
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -87,15 +87,15 @@ class TestManagerConnect:
         """Conexión exitosa (mockeando protocolo)."""
         manager = Manager(username="admin", secret="pass")
 
-        with patch.object(manager, "_protocol") as mock_proto:
-            mock_proto.connect = AsyncMock()
-
-            # Mock login response
-            mock_proto.send_action = AsyncMock()
-            mock_proto.send_action.return_value = Message({
+        with patch("asyncio_manager.manager.AMIProtocol") as mock_proto_class:
+            mock_instance = MagicMock()
+            mock_instance.connect = AsyncMock()
+            mock_instance.send_action = AsyncMock()
+            mock_instance.send_action.return_value = Message({
                 "Response": "Success",
                 "Message": "Authentication accepted",
             })
+            mock_proto_class.return_value = mock_instance
 
             await manager.connect()
 
@@ -107,10 +107,12 @@ class TestManagerConnect:
         """Fallo de conexión."""
         manager = Manager(username="admin", secret="pass")
 
-        with patch.object(manager, "_protocol") as mock_proto:
-            mock_proto.connect = AsyncMock(
+        with patch("asyncio_manager.manager.AMIProtocol") as mock_proto_class:
+            mock_instance = MagicMock()
+            mock_instance.connect = AsyncMock(
                 side_effect=ConnectionError("Connection refused")
             )
+            mock_proto_class.return_value = mock_instance
 
             with pytest.raises(ConnectionError):
                 await manager.connect()
