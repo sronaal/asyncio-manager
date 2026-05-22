@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>asyncio-manager — Documentación</title>
+<title>asyncio-manager — Documentation</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -62,11 +62,9 @@
   .feature-item { background: #f5f7fa; border-radius: 8px; padding: .8rem 1rem; border-left: 3px solid #1a237e; }
   .feature-item strong { color: #1a237e; }
   footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; font-size: .85rem; color: #90a4ae; }
-  .tag { display: inline-block; margin-right: .4rem; margin-bottom: .4rem; }
   @media (max-width: 768px) {
     body { flex-direction: column; }
     nav { width: 100%; min-width: 0; height: auto; position: static; border-right: none; border-bottom: 1px solid #e9ecef; padding: 1rem 1.5rem; }
-    nav h2:first-child { margin-top: 0; }
     main { padding: 1.5rem; }
     .feature-grid { grid-template-columns: 1fr; }
   }
@@ -75,54 +73,54 @@
 <body>
 
 <nav>
-  <h2>Inicio</h2>
-  <a href="#intro">Introducción</a>
-  <a href="#instalacion">Instalación</a>
-  <a href="#primeros-pasos">Primeros pasos</a>
+  <h2>Getting Started</h2>
+  <a href="#intro">Introduction</a>
+  <a href="#install">Installation</a>
+  <a href="#quickstart">Quick Start</a>
 
-  <h2>Uso</h2>
-  <a href="#event-listener">Event Listener</a>
-  <a href="#originate">Originar llamadas</a>
+  <h2>Usage</h2>
+  <a href="#listener">Event Listener</a>
+  <a href="#originate">Originate Calls</a>
   <a href="#fastagi">FastAGI</a>
-  <a href="#call-manager">CallManager</a>
+  <a href="#callmanager">CallManager</a>
   <a href="#eventlist">EventList</a>
   <a href="#cli">CLI</a>
 
-  <h2>Referencia</h2>
-  <a href="#api">API rápida</a>
-  <a href="#migracion">Migración Panoramisk</a>
-  <a href="#faq">FAQ / Troubleshooting</a>
+  <h2>Reference</h2>
+  <a href="#api">API Reference</a>
+  <a href="#migration">Migration Guide</a>
+  <a href="#faq">FAQ</a>
 </nav>
 
 <main>
 
 <header>
   <h1>asyncio-manager <span class="badge badge-success">v1.0.0</span></h1>
-  <p>Cliente AMI (Asterisk Manager Interface) asíncrono moderno para Python 3.10+.</p>
+  <p>Modern async Asterisk Manager Interface (AMI) client for Python 3.10+.</p>
 </header>
 
 <!-- INTRO -->
 <section id="intro">
-  <h2>Introducción</h2>
-  <p><strong>asyncio-manager</strong> es un reemplazo moderno de la librería Panoramisk (deprecada). Conecta con Asterisk vía el protocolo AMI usando <code>async/await</code>, sin dependencias externas, con type hints completos y manejo robusto de errores.</p>
+  <h2>Introduction</h2>
+  <p><strong>asyncio-manager</strong> is a modern replacement for the deprecated Panoramisk library. It connects to Asterisk via the AMI protocol using <code>async/await</code>, with zero external dependencies, full type hints, and robust error handling.</p>
 
   <div class="feature-grid">
-    <div class="feature-item"><strong>Async/await</strong> — Sin <code>get_event_loop()</code> deprecado</div>
-    <div class="feature-item"><strong>Cero deps</strong> — Solo librería estándar</div>
-    <div class="feature-item"><strong>Type hints</strong> — <code>mypy --strict</code> listo</div>
+    <div class="feature-item"><strong>Async/await</strong> — No deprecated <code>get_event_loop()</code></div>
+    <div class="feature-item"><strong>Zero deps</strong> — Python stdlib only</div>
+    <div class="feature-item"><strong>Type hints</strong> — <code>mypy --strict</code> ready</div>
     <div class="feature-item"><strong>Context manager</strong> — <code>async with Manager(...) as m:</code></div>
-    <div class="feature-item"><strong>Reconexión</strong> — Backoff exponencial + jitter</div>
-    <div class="feature-item"><strong>EventList</strong> — Soporte explícito para listas de eventos</div>
+    <div class="feature-item"><strong>Reconnection</strong> — Exponential backoff + jitter</div>
+    <div class="feature-item"><strong>EventList</strong> — Explicit support for event lists</div>
   </div>
 </section>
 
-<!-- INSTALACION -->
-<section id="instalacion">
-  <h2>Instalación</h2>
+<!-- INSTALL -->
+<section id="install">
+  <h2>Installation</h2>
   <pre><code>pip install asyncio-manager</code></pre>
-  <p>Con dependencias de desarrollo:</p>
+  <p>With dev dependencies:</p>
   <pre><code>pip install -e ".[dev]"</code></pre>
-  <p>Configuración requerida en <code>/etc/asterisk/manager.conf</code>:</p>
+  <p>Asterisk <code>manager.conf</code> configuration:</p>
   <pre><code>[general]
 enabled = yes
 port = 5038
@@ -134,11 +132,11 @@ read = all
 write = all</code></pre>
 </section>
 
-<!-- PRIMEROS PASOS -->
-<section id="primeros-pasos">
-  <h2>Primeros pasos</h2>
+<!-- QUICKSTART -->
+<section id="quickstart">
+  <h2>Quick Start</h2>
 
-  <h3>Conexión básica</h3>
+  <h3>Basic connection</h3>
   <pre><code>import asyncio
 from asyncio_manager import Manager
 
@@ -151,36 +149,30 @@ async def main():
         await manager.connect()
 
         response = await manager.send_action({"Action": "Ping"})
-        print(f"Ping exitoso: {response.is_success}")
+        print(f"Ping success: {response.is_success}")
 
 asyncio.run(main())</code></pre>
 
-  <h3>Desde archivo INI</h3>
+  <h3>From config file</h3>
   <pre><code>from asyncio_manager import Manager, ManagerConfig
 
 config = ManagerConfig.from_file("config.ini")
 
 async with Manager(config=config) as manager:
-    await manager.connect()
-    # ...</code></pre>
+    await manager.connect()</code></pre>
 
-  <h3>Desde variables de entorno</h3>
-  <pre><code>import os
-os.environ["ASTERISK_HOST"] = "10.0.0.1"
-os.environ["ASTERISK_USERNAME"] = "admin"
-os.environ["ASTERISK_SECRET"] = "s3cret"
-
-from asyncio_manager import Manager, ManagerConfig
+  <h3>From environment variables</h3>
+  <pre><code>from asyncio_manager import Manager, ManagerConfig
 
 config = ManagerConfig.from_env()
 async with Manager(config=config) as manager:
     await manager.connect()</code></pre>
 </section>
 
-<!-- EVENT LISTENER -->
-<section id="event-listener">
+<!-- LISTENER -->
+<section id="listener">
   <h2>Event Listener</h2>
-  <p>Escucha todos los eventos de Asterisk y ejecuta callbacks asíncronos según el patrón registrado:</p>
+  <p>Listen to all Asterisk events with async callbacks:</p>
   <pre><code>import asyncio
 from asyncio_manager import Manager
 
@@ -194,85 +186,71 @@ async def main():
 
         @manager.register_event("*")
         async def on_event(message):
-            print(f"Evento: {message.event_type} - {message}")
+            print(f"Event: {message.event_type} - {message}")
 
         @manager.register_event("NewChannel")
         async def on_new_channel(message):
-            print(f"Nueva llamada: {message.get('Channel')}")
+            print(f"New call: {message.get('Channel')}")
 
         @manager.register_event("Hangup")
         async def on_hangup(message):
-            print(f"Llamada finalizada: {message.get('Channel')}")
+            print(f"Call ended: {message.get('Channel')}")
 
         try:
             while True:
                 await asyncio.sleep(1)
         except KeyboardInterrupt:
-            print("Cerrando...")
+            print("Shutting down...")
 
 asyncio.run(main())</code></pre>
 </section>
 
 <!-- ORIGINATE -->
 <section id="originate">
-  <h2>Originar llamadas</h2>
-  <p>Usando el helper <code>originate()</code> del Manager, con soporte para llamadas asíncronas y concurrentes:</p>
+  <h2>Originate Calls</h2>
+  <p>Originate multiple calls concurrently:</p>
   <pre><code>import asyncio
 from asyncio_manager import Manager
 
-async def originate_call(manager, phone_number):
+async def originate_call(manager, number):
     try:
         response = await manager.originate(
-            channel=f"SIP/provider/{phone_number}",
+            channel=f"SIP/provider/{number}",
             exten="100",
             context="from-internal",
             priority=1,
             caller_id="Test &lt;1234&gt;",
-            timeout=30,
-            async_=True,
+            timeout=30, async_=True,
         )
-        if response.is_success:
-            print(f"OK: {response.action_id}")
-            return response.action_id
+        return response.action_id if response.is_success else None
     except Exception as e:
         print(f"Error: {e}")
-    return None
+        return None
 
 async def main():
-    async with Manager(
-        host="127.0.0.1",
-        username="admin",
-        secret="password",
-        timeout=10.0,
-    ) as manager:
-        await manager.connect()
-
-        numeros = ["5551234567", "5559876543"]
-        tasks = [originate_call(manager, n) for n in numeros]
+    async with Manager(host="127.0.0.1", username="admin", secret="password") as m:
+        await m.connect()
+        numbers = ["5551234567", "5559876543"]
+        tasks = [originate_call(m, n) for n in numbers]
         results = await asyncio.gather(*tasks)
-        print(f"Exitosas: {sum(1 for r in results if r)}/{len(results)}")
+        print(f"Successful: {sum(1 for r in results if r)}/{len(results)}")
 
 asyncio.run(main())</code></pre>
 </section>
 
 <!-- FASTAGI -->
 <section id="fastagi">
-  <h2>Servidor FastAGI</h2>
-  <p>Servidor IVR asíncrono. A diferencia de Panoramisk, no usa el decorador <code>asyncio.coroutine()</code> (eliminado en Python 3.11):</p>
+  <h2>FastAGI Server</h2>
+  <p>Async IVR server. Uses only native <code>async def</code> (no deprecated <code>asyncio.coroutine()</code>):</p>
   <pre><code>import asyncio
 from asyncio_manager import FastAGIServer, Request
 
 async def ivr_handler(request: Request):
-    channel = request.headers.get("agi_channel", "unknown")
-    caller_id = request.headers.get("agi_callerid", "unknown")
-    print(f"IVR: {caller_id} en {channel}")
-
     await request.answer()
-    await request.say_digits("1")  # Presione 1
-    await request.say_digits("2")  # Presione 2
+    await request.say_digits("1")
+    await request.say_digits("2")
 
     result = await request.get_data("welcome", 5000, 2)
-    print(f"Usuario presionó: {result}")
 
     if result == "1":
         await request.exec_("Goto", "sales,s,1")
@@ -285,7 +263,6 @@ async def main():
     server = FastAGIServer()
     server.add_script("menu", ivr_handler)
     await server.start(host="0.0.0.0", port=4574)
-    print("FastAGI escuchando en :4574")
 
     try:
         while True:
@@ -296,38 +273,27 @@ async def main():
 asyncio.run(main())</code></pre>
 </section>
 
-<!-- CALL MANAGER -->
-<section id="call-manager">
+<!-- CALLMANAGER -->
+<section id="callmanager">
   <h2>CallManager</h2>
-  <p>Seguimiento de llamadas individuales con ciclo de vida completo:</p>
+  <p>Full call lifecycle tracking:</p>
   <pre><code>import asyncio
 from asyncio_manager import CallManager
 
 async def main():
-    call_mgr = CallManager(
-        host="127.0.0.1",
-        username="admin",
-        secret="password",
-    )
+    mgr = CallManager(host="127.0.0.1", username="admin", secret="password")
 
-    async with call_mgr:
-        call = await call_mgr.originate(
-            channel="SIP/2000",
-            exten="1000",
-            context="default",
-            priority=1,
-        )
-        print(f"Llamada originada: {call.id}")
+    async with mgr:
+        call = await mgr.originate("SIP/2000", "1000", context="default")
+        print(f"Call originated: {call.id}")
 
         try:
             await call.wait_for_answer(timeout=30.0)
-            print("Llamada respondida")
-
+            print("Answered")
             await call.wait_for_hangup()
-            print("Llamada finalizada")
-
+            print("Hung up")
         except asyncio.TimeoutError:
-            print("Timeout - colgando...")
+            print("Timeout — hanging up")
             await call.hangup()
 
 asyncio.run(main())</code></pre>
@@ -336,129 +302,105 @@ asyncio.run(main())</code></pre>
 <!-- EVENTLIST -->
 <section id="eventlist">
   <h2>EventList</h2>
-  <p>Acciones que generan múltiples eventos (como <code>QueueStatus</code>) seguidas de un evento <code>*Complete</code>. Usa <code>send_action_and_wait_all()</code> para recolectarlos todos:</p>
+  <p>For actions that return multiple events followed by <code>*Complete</code> (e.g. <code>QueueStatus</code>):</p>
   <pre><code>import asyncio
 from asyncio_manager import Manager
 
 async def main():
-    async with Manager(
-        host="127.0.0.1",
-        username="admin",
-        secret="password",
-    ) as manager:
-        await manager.connect()
+    async with Manager(host="127.0.0.1", username="admin", secret="password") as m:
+        await m.connect()
 
-        messages = await manager.send_action_and_wait_all({
-            "Action": "QueueStatus",
-            "Queue": "support",
+        messages = await m.send_action_and_wait_all({
+            "Action": "QueueStatus", "Queue": "support",
         })
 
-        print(f"Recibidos {len(messages)} mensajes:")
+        print(f"Received {len(messages)} messages:")
         for msg in messages:
-            if msg.is_event:
-                print(f"  {msg.event_type}: {dict(msg)}")
+            print(f"  {msg.event_type}: {dict(msg)}")
 
 asyncio.run(main())</code></pre>
 </section>
 
 <!-- CLI -->
 <section id="cli">
-  <h2>CLI (Interfaz de línea de comandos)</h2>
-  <p>El paquete incluye un comando <code>asyncio-manager</code> para operaciones rápidas desde la terminal:</p>
+  <h2>CLI</h2>
 
   <div class="card">
-    <h4>Enviar una acción</h4>
+    <h4>Send an action</h4>
     <pre><code>asyncio-manager --username admin --secret password action Ping</code></pre>
   </div>
 
   <div class="card">
-    <h4>Originar llamada</h4>
+    <h4>Originate a call</h4>
     <pre><code>asyncio-manager --username admin --secret password \
     originate SIP/100 200 --caller-id "Test &lt;1234&gt;"</code></pre>
   </div>
 
   <div class="card">
-    <h4>Monitorear eventos</h4>
+    <h4>Monitor events</h4>
     <pre><code>asyncio-manager --username admin --secret password \
     monitor --filter "NewChannel"</code></pre>
   </div>
 
   <div class="card">
-    <h4>Ejecutar comando Asterisk</h4>
+    <h4>Run Asterisk CLI command</h4>
     <pre><code>asyncio-manager --username admin --secret password \
     command "pjsip show endpoints"</code></pre>
   </div>
 </section>
 
-<!-- API RAPIDA -->
+<!-- API -->
 <section id="api">
-  <h2>Referencia rápida de API</h2>
+  <h2>API Reference</h2>
 
   <h3>Manager</h3>
   <table>
-    <tr><th>Método</th><th>Descripción</th></tr>
-    <tr><td><code>connect()</code></td><td>Conecta y autentica contra Asterisk</td></tr>
-    <tr><td><code>close()</code></td><td>Cierra la conexión</td></tr>
-    <tr><td><code>send_action(action, *, timeout, as_list)</code></td><td>Envía acción AMI y espera respuesta</td></tr>
-    <tr><td><code>send_action_and_wait_all(action, *, timeout)</code></td><td>Envía acción y recolecta EventList</td></tr>
-    <tr><td><code>originate(channel, exten, ...)</code></td><td>Helper para originar llamadas</td></tr>
-    <tr><td><code>command(cmd)</code></td><td>Ejecuta comando CLI de Asterisk</td></tr>
-    <tr><td><code>register_event(pattern)</code></td><td>Decorador para callbacks de eventos</td></tr>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td><code>connect()</code></td><td>Connect and authenticate to Asterisk</td></tr>
+    <tr><td><code>close()</code></td><td>Close the connection</td></tr>
+    <tr><td><code>send_action(action, *, timeout, as_list)</code></td><td>Send an AMI action and wait for response</td></tr>
+    <tr><td><code>send_action_and_wait_all(action, *, timeout)</code></td><td>Send action and collect EventList</td></tr>
+    <tr><td><code>originate(channel, exten, ...)</code></td><td>Helper for call origination</td></tr>
+    <tr><td><code>command(cmd)</code></td><td>Execute Asterisk CLI command</td></tr>
+    <tr><td><code>register_event(pattern)</code></td><td>Decorator for event callbacks</td></tr>
   </table>
 
   <h3>Message</h3>
   <table>
-    <tr><th>Propiedad</th><th>Descripción</th></tr>
-    <tr><td><code>is_response</code></td><td>¿Es respuesta a una acción?</td></tr>
-    <tr><td><code>is_event</code></td><td>¿Es un evento?</td></tr>
-    <tr><td><code>is_success</code></td><td>¿Fue exitoso?</td></tr>
-    <tr><td><code>action_id</code></td><td>ID de acción correlacionada</td></tr>
-    <tr><td><code>event_type</code></td><td>Tipo de evento (ej: NewChannel)</td></tr>
-    <tr><td><code>is_complete_event</code></td><td>¿Es *Complete (fin de EventList)?</td></tr>
+    <tr><th>Property</th><th>Description</th></tr>
+    <tr><td><code>is_response</code></td><td>Is this a response to an action?</td></tr>
+    <tr><td><code>is_event</code></td><td>Is this an event?</td></tr>
+    <tr><td><code>is_success</code></td><td>Was the action successful?</td></tr>
+    <tr><td><code>action_id</code></td><td>Correlated action ID</td></tr>
+    <tr><td><code>event_type</code></td><td>Event type (e.g. NewChannel)</td></tr>
+    <tr><td><code>is_complete_event</code></td><td>Is this a <code>*Complete</code> event?</td></tr>
   </table>
 
   <h3>CallManager / Call</h3>
   <table>
-    <tr><th>Método</th><th>Descripción</th></tr>
-    <tr><td><code>CallManager.originate(channel, exten, ...)</code></td><td>Originar y obtener objeto Call</td></tr>
-    <tr><td><code>Call.wait_for_answer(timeout)</code></td><td>Esperar que respondan</td></tr>
-    <tr><td><code>Call.wait_for_hangup(timeout)</code></td><td>Esperar que cuelguen</td></tr>
-    <tr><td><code>Call.transfer(exten, context)</code></td><td>Transferir llamada</td></tr>
-    <tr><td><code>Call.hangup()</code></td><td>Colgar llamada</td></tr>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td><code>CallManager.originate(channel, exten, ...)</code></td><td>Originate and get a Call object</td></tr>
+    <tr><td><code>Call.wait_for_answer(timeout)</code></td><td>Wait for the call to be answered</td></tr>
+    <tr><td><code>Call.wait_for_hangup(timeout)</code></td><td>Wait for the call to be hung up</td></tr>
+    <tr><td><code>Call.transfer(exten, context)</code></td><td>Transfer the call</td></tr>
+    <tr><td><code>Call.hangup()</code></td><td>Hang up the call</td></tr>
   </table>
 </section>
 
-<!-- MIGRACION -->
-<section id="migracion">
-  <h2>Migración desde Panoramisk</h2>
+<!-- MIGRATION -->
+<section id="migration">
+  <h2>Migration from Panoramisk</h2>
 
   <table>
-    <tr><th>Panoramisk (deprecado)</th><th>asyncio-manager</th></tr>
+    <tr><th>Panoramisk (deprecated)</th><th>asyncio-manager</th></tr>
     <tr><td><code>loop = asyncio.get_event_loop()</code></td><td><code>asyncio.run(main())</code></td></tr>
     <tr><td><code>manager = Manager(loop=loop)</code></td><td><code>async with Manager() as m:</code></td></tr>
-    <tr><td><code>asyncio.coroutine()</code> (roto en 3.11+)</td><td>Solo <code>async def</code></td></tr>
-    <tr><td><code>yaml.load()</code> (inseguro)</td><td><code>yaml.safe_load()</code></td></tr>
-    <tr><td>Reconexión fija 2s infinita</td><td>Backoff exponencial + jitter + límite</td></tr>
-    <tr><td>Action hereda de Future + CaseInsensitiveDict</td><td>Action con composición (Future interno)</td></tr>
-    <tr><td>Heurística multi/completed</td><td>EventList explícito con <code>send_action_and_wait_all()</code></td></tr>
-    <tr><td>Sin type hints</td><td>100% type hints, <code>mypy --strict</code></td></tr>
-  </table>
-
-  <p>Ejemplo de migración:</p>
-  <pre><code># ANTES (Panoramisk)
-loop = asyncio.get_event_loop()
-manager = Manager(loop=loop, host='...')
-manager.connect()
-
-# DESPUÉS (asyncio-manager)
-async with Manager(host='...') as manager:
-    await manager.connect()</code></pre>
-
-  <table>
-    <tr><th>Panoramisk</th><th>asyncio-manager</th></tr>
-    <tr><td><code>from panoramisk import Manager</code></td><td><code>from asyncio_manager import Manager</code></td></tr>
-    <tr><td><code>from panoramisk.fast_agi import Application</code></td><td><code>from asyncio_manager import FastAGIServer</code></td></tr>
-    <tr><td><code>from panoramisk import CallManager</code></td><td><code>from asyncio_manager import CallManager</code></td></tr>
+    <tr><td><code>asyncio.coroutine()</code> (broken on 3.11+)</td><td>Native <code>async def</code> only</td></tr>
+    <tr><td><code>yaml.load()</code> (unsafe)</td><td><code>yaml.safe_load()</code></td></tr>
+    <tr><td>Infinite 2s reconnection</td><td>Exponential backoff + jitter + limit</td></tr>
+    <tr><td>Dual inheritance</td><td>Composition pattern</td></tr>
+    <tr><td>Fragile multi/completed</td><td>Explicit EventList support</td></tr>
+    <tr><td>No type hints</td><td>100% type hints, <code>mypy --strict</code></td></tr>
   </table>
 </section>
 
@@ -467,31 +409,31 @@ async with Manager(host='...') as manager:
   <h2>FAQ / Troubleshooting</h2>
 
   <div class="card">
-    <h4>ConnectionError: No se puede conectar</h4>
-    <p>Verifica que Asterisk esté corriendo (<code>systemctl status asterisk</code>) y el puerto AMI (5038) sea accesible (<code>netstat -tlnp | grep 5038</code>).</p>
+    <h4>ConnectionError: Cannot connect</h4>
+    <p>Verify Asterisk is running (<code>systemctl status asterisk</code>) and port 5038 is accessible (<code>netstat -tlnp | grep 5038</code>).</p>
   </div>
 
   <div class="card">
-    <h4>AuthenticationError: Credenciales inválidas</h4>
-    <p>Revisa <code>/etc/asterisk/manager.conf</code> y asegúrate de que el usuario tenga permisos de lectura/escritura.</p>
+    <h4>AuthenticationError: Invalid credentials</h4>
+    <p>Check <code>/etc/asterisk/manager.conf</code> and ensure the user has read/write permissions.</p>
   </div>
 
   <div class="card">
-    <h4>TimeoutError: La operación excedió el tiempo de espera</h4>
-    <p>Aumenta los timeouts en la creación del Manager o al enviar la acción:</p>
+    <h4>TimeoutError: Operation timed out</h4>
+    <p>Increase timeouts in the Manager constructor:</p>
     <pre><code>Manager(timeout=15.0, read_timeout=60.0, connect_timeout=30.0)</code></pre>
   </div>
 
   <div class="card">
-    <h4>¿Cómo verifico que la librería funciona sin Asterisk real?</h4>
-    <p>Usa los tests unitarios:</p>
+    <h4>How do I verify the library works without a real Asterisk?</h4>
+    <p>Run the unit tests:</p>
     <pre><code>pip install -e ".[dev]"
 python -m pytest tests/ -v</code></pre>
   </div>
 </section>
 
 <footer>
-  <p>asyncio-manager v1.0.0 — <a href="https://github.com/anomalyco/asyncio-manager">GitHub</a> — MIT License</p>
+  <p>asyncio-manager v1.0.0 — <a href="https://github.com/sronaal/asyncio-manager">GitHub</a> — MIT License</p>
 </footer>
 
 </main>
