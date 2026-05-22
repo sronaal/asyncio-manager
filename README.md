@@ -4,7 +4,7 @@ Modern async Asterisk Manager Interface (AMI) client for Python 3.10+.
 A drop-in replacement for the deprecated Panoramisk library.
 
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/asyncio-manager/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/sronaal/asyncio-manager/blob/main/LICENSE)
 
 ## Features
 
@@ -102,7 +102,7 @@ asyncio-manager command "pjsip show endpoints"
 
 ## Examples
 
-See [examples/](examples/) for complete working examples:
+See [examples/](https://github.com/sronaal/asyncio-manager/tree/main/examples) for complete working examples:
 
 - `basic_listener.py` — Event listener with callbacks
 - `call_origination.py` — Concurrent call origination
@@ -112,14 +112,14 @@ See [examples/](examples/) for complete working examples:
 
 ## Documentation
 
-Full documentation is available in [docs/](docs/):
+Full documentation is available in [docs/](https://github.com/sronaal/asyncio-manager/tree/main/docs):
 
-- [Installation](docs/installation.md)
-- [Getting Started](docs/getting_started.md)
-- [API Reference](docs/api_reference.md)
-- [Examples](docs/examples.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Migration from Panoramisk](docs/migration_from_panoramisk.md)
+- [Installation](https://github.com/sronaal/asyncio-manager/tree/main/docs/installation.md)
+- [Getting Started](https://github.com/sronaal/asyncio-manager/tree/main/docs/getting_started.md)
+- [API Reference](https://github.com/sronaal/asyncio-manager/tree/main/docs/api_reference.md)
+- [Examples](https://github.com/sronaal/asyncio-manager/tree/main/docs/examples.md)
+- [Troubleshooting](https://github.com/sronaal/asyncio-manager/tree/main/docs/troubleshooting.md)
+- [Migration from Panoramisk](https://github.com/sronaal/asyncio-manager/tree/main/docs/migration_from_panoramisk.md)
 
 ## Migration from Panoramisk
 
