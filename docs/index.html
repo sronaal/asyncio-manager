@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>asyncio-manager — Documentación</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #37474f; background: #fff; line-height: 1.7; display: flex;
+  }
+  nav {
+    width: 260px; min-width: 260px; height: 100vh; position: sticky; top: 0;
+    background: #f8f9fa; border-right: 1px solid #e9ecef; padding: 2rem 1.5rem;
+    overflow-y: auto;
+  }
+  nav h2 { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; color: #90a4ae; margin: 1.5rem 0 .5rem; }
+  nav h2:first-child { margin-top: 0; }
+  nav a {
+    display: block; padding: .3rem .75rem .3rem 0; color: #455a64;
+    text-decoration: none; font-size: .9rem; border-radius: 4px;
+  }
+  nav a:hover { color: #1a237e; background: #e8eaf6; padding-left: .75rem; }
+  main { flex: 1; max-width: 880px; padding: 3rem 2.5rem 5rem; }
+  header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e8eaf6; }
+  header h1 { font-size: 2.2rem; color: #1a237e; font-weight: 700; }
+  header p { font-size: 1.05rem; color: #78909c; margin-top: .4rem; }
+  section { margin-bottom: 3rem; }
+  h2 { font-size: 1.6rem; color: #1a237e; margin-bottom: 1.2rem; padding-bottom: .4rem; border-bottom: 1px solid #e8eaf6; }
+  h3 { font-size: 1.15rem; color: #283593; margin: 1.5rem 0 .75rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { margin: 0 0 1rem 1.5rem; }
+  li { margin-bottom: .3rem; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: .87em; background: #f5f5f5; padding: .15em .4em; border-radius: 3px;
+  }
+  pre {
+    background: #f5f7fa; border: 1px solid #e0e6ed; border-radius: 6px;
+    padding: 1.2rem 1.4rem; overflow-x: auto; margin: 0 0 1.2rem;
+    font-size: .87rem; line-height: 1.55;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: .9rem; }
+  th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid #e0e0e0; }
+  th { background: #f5f7fa; color: #1a237e; font-weight: 600; }
+  .badge {
+    display: inline-block; font-size: .7rem; font-weight: 600; padding: .15rem .55rem;
+    border-radius: 10px; text-transform: uppercase; letter-spacing: .04em;
+  }
+  .badge-success { background: #e8f5e9; color: #2e7d32; }
+  .badge-primary { background: #e3f2fd; color: #1565c0; }
+  .badge-warning { background: #fff3e0; color: #e65100; }
+  .badge-danger { background: #fbe9e7; color: #c62828; }
+  .card {
+    background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 1.2rem 1.5rem; margin-bottom: 1rem;
+  }
+  .card h4 { color: #1a237e; margin-bottom: .4rem; }
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .feature-item { background: #f5f7fa; border-radius: 8px; padding: .8rem 1rem; border-left: 3px solid #1a237e; }
+  .feature-item strong { color: #1a237e; }
+  footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; font-size: .85rem; color: #90a4ae; }
+  .tag { display: inline-block; margin-right: .4rem; margin-bottom: .4rem; }
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    nav { width: 100%; min-width: 0; height: auto; position: static; border-right: none; border-bottom: 1px solid #e9ecef; padding: 1rem 1.5rem; }
+    nav h2:first-child { margin-top: 0; }
+    main { padding: 1.5rem; }
+    .feature-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h2>Inicio</h2>
+  <a href="#intro">Introducción</a>
+  <a href="#instalacion">Instalación</a>
+  <a href="#primeros-pasos">Primeros pasos</a>
+
+  <h2>Uso</h2>
+  <a href="#event-listener">Event Listener</a>
+  <a href="#originate">Originar llamadas</a>
+  <a href="#fastagi">FastAGI</a>
+  <a href="#call-manager">CallManager</a>
+  <a href="#eventlist">EventList</a>
+  <a href="#cli">CLI</a>
+
+  <h2>Referencia</h2>
+  <a href="#api">API rápida</a>
+  <a href="#migracion">Migración Panoramisk</a>
+  <a href="#faq">FAQ / Troubleshooting</a>
+</nav>
+
+<main>
+
+<header>
+  <h1>asyncio-manager <span class="badge badge-success">v1.0.0</span></h1>
+  <p>Cliente AMI (Asterisk Manager Interface) asíncrono moderno para Python 3.10+.</p>
+</header>
+
+<!-- INTRO -->
+<section id="intro">
+  <h2>Introducción</h2>
+  <p><strong>asyncio-manager</strong> es un reemplazo moderno de la librería Panoramisk (deprecada). Conecta con Asterisk vía el protocolo AMI usando <code>async/await</code>, sin dependencias externas, con type hints completos y manejo robusto de errores.</p>
+
+  <div class="feature-grid">
+    <div class="feature-item"><strong>Async/await</strong> — Sin <code>get_event_loop()</code> deprecado</div>
+    <div class="feature-item"><strong>Cero deps</strong> — Solo librería estándar</div>
+    <div class="feature-item"><strong>Type hints</strong> — <code>mypy --strict</code> listo</div>
+    <div class="feature-item"><strong>Context manager</strong> — <code>async with Manager(...) as m:</code></div>
+    <div class="feature-item"><strong>Reconexión</strong> — Backoff exponencial + jitter</div>
+    <div class="feature-item"><strong>EventList</strong> — Soporte explícito para listas de eventos</div>
+  </div>
+</section>
+
+<!-- INSTALACION -->
+<section id="instalacion">
+  <h2>Instalación</h2>
+  <pre><code>pip install asyncio-manager</code></pre>
+  <p>Con dependencias de desarrollo:</p>
+  <pre><code>pip install -e ".[dev]"</code></pre>
+  <p>Configuración requerida en <code>/etc/asterisk/manager.conf</code>:</p>
+  <pre><code>[general]
+enabled = yes
+port = 5038
+bindaddr = 0.0.0.0
+
+[admin]
+secret = password
+read = all
+write = all</code></pre>
+</section>
+
+<!-- PRIMEROS PASOS -->
+<section id="primeros-pasos">
+  <h2>Primeros pasos</h2>
+
+  <h3>Conexión básica</h3>
+  <pre><code>import asyncio
+from asyncio_manager import Manager
+
+async def main():
+    async with Manager(
+        host="127.0.0.1",
+        username="admin",
+        secret="password",
+    ) as manager:
+        await manager.connect()
+
+        response = await manager.send_action({"Action": "Ping"})
+        print(f"Ping exitoso: {response.is_success}")
+
+asyncio.run(main())</code></pre>
+
+  <h3>Desde archivo INI</h3>
+  <pre><code>from asyncio_manager import Manager, ManagerConfig
+
+config = ManagerConfig.from_file("config.ini")
+
+async with Manager(config=config) as manager:
+    await manager.connect()
+    # ...</code></pre>
+
+  <h3>Desde variables de entorno</h3>
+  <pre><code>import os
+os.environ["ASTERISK_HOST"] = "10.0.0.1"
+os.environ["ASTERISK_USERNAME"] = "admin"
+os.environ["ASTERISK_SECRET"] = "s3cret"
+
+from asyncio_manager import Manager, ManagerConfig
+
+config = ManagerConfig.from_env()
+async with Manager(config=config) as manager:
+    await manager.connect()</code></pre>
+</section>
+
+<!-- EVENT LISTENER -->
+<section id="event-listener">
+  <h2>Event Listener</h2>
+  <p>Escucha todos los eventos de Asterisk y ejecuta callbacks asíncronos según el patrón registrado:</p>
+  <pre><code>import asyncio
+from asyncio_manager import Manager
+
+async def main():
+    async with Manager(
+        host="127.0.0.1",
+        username="admin",
+        secret="password",
+    ) as manager:
+        await manager.connect()
+
+        @manager.register_event("*")
+        async def on_event(message):
+            print(f"Evento: {message.event_type} - {message}")
+
+        @manager.register_event("NewChannel")
+        async def on_new_channel(message):
+            print(f"Nueva llamada: {message.get('Channel')}")
+
+        @manager.register_event("Hangup")
+        async def on_hangup(message):
+            print(f"Llamada finalizada: {message.get('Channel')}")
+
+        try:
+            while True:
+                await asyncio.sleep(1)
+        except KeyboardInterrupt:
+            print("Cerrando...")
+
+asyncio.run(main())</code></pre>
+</section>
+
+<!-- ORIGINATE -->
+<section id="originate">
+  <h2>Originar llamadas</h2>
+  <p>Usando el helper <code>originate()</code> del Manager, con soporte para llamadas asíncronas y concurrentes:</p>
+  <pre><code>import asyncio
+from asyncio_manager import Manager
+
+async def originate_call(manager, phone_number):
+    try:
+        response = await manager.originate(
+            channel=f"SIP/provider/{phone_number}",
+            exten="100",
+            context="from-internal",
+            priority=1,
+            caller_id="Test &lt;1234&gt;",
+            timeout=30,
+            async_=True,
+        )
+        if response.is_success:
+            print(f"OK: {response.action_id}")
+            return response.action_id
+    except Exception as e:
+        print(f"Error: {e}")
+    return None
+
+async def main():
+    async with Manager(
+        host="127.0.0.1",
+        username="admin",
+        secret="password",
+        timeout=10.0,
+    ) as manager:
+        await manager.connect()
+
+        numeros = ["5551234567", "5559876543"]
+        tasks = [originate_call(manager, n) for n in numeros]
+        results = await asyncio.gather(*tasks)
+        print(f"Exitosas: {sum(1 for r in results if r)}/{len(results)}")
+
+asyncio.run(main())</code></pre>
+</section>
+
+<!-- FASTAGI -->
+<section id="fastagi">
+  <h2>Servidor FastAGI</h2>
+  <p>Servidor IVR asíncrono. A diferencia de Panoramisk, no usa el decorador <code>asyncio.coroutine()</code> (eliminado en Python 3.11):</p>
+  <pre><code>import asyncio
+from asyncio_manager import FastAGIServer, Request
+
+async def ivr_handler(request: Request):
+    channel = request.headers.get("agi_channel", "unknown")
+    caller_id = request.headers.get("agi_callerid", "unknown")
+    print(f"IVR: {caller_id} en {channel}")
+
+    await request.answer()
+    await request.say_digits("1")  # Presione 1
+    await request.say_digits("2")  # Presione 2
+
+    result = await request.get_data("welcome", 5000, 2)
+    print(f"Usuario presionó: {result}")
+
+    if result == "1":
+        await request.exec_("Goto", "sales,s,1")
+    elif result == "2":
+        await request.exec_("Goto", "support,s,1")
+    else:
+        await request.hangup()
+
+async def main():
+    server = FastAGIServer()
+    server.add_script("menu", ivr_handler)
+    await server.start(host="0.0.0.0", port=4574)
+    print("FastAGI escuchando en :4574")
+
+    try:
+        while True:
+            await asyncio.sleep(1)
+    except KeyboardInterrupt:
+        await server.stop()
+
+asyncio.run(main())</code></pre>
+</section>
+
+<!-- CALL MANAGER -->
+<section id="call-manager">
+  <h2>CallManager</h2>
+  <p>Seguimiento de llamadas individuales con ciclo de vida completo:</p>
+  <pre><code>import asyncio
+from asyncio_manager import CallManager
+
+async def main():
+    call_mgr = CallManager(
+        host="127.0.0.1",
+        username="admin",
+        secret="password",
+    )
+
+    async with call_mgr:
+        call = await call_mgr.originate(
+            channel="SIP/2000",
+            exten="1000",
+            context="default",
+            priority=1,
+        )
+        print(f"Llamada originada: {call.id}")
+
+        try:
+            await call.wait_for_answer(timeout=30.0)
+            print("Llamada respondida")
+
+            await call.wait_for_hangup()
+            print("Llamada finalizada")
+
+        except asyncio.TimeoutError:
+            print("Timeout - colgando...")
+            await call.hangup()
+
+asyncio.run(main())</code></pre>
+</section>
+
+<!-- EVENTLIST -->
+<section id="eventlist">
+  <h2>EventList</h2>
+  <p>Acciones que generan múltiples eventos (como <code>QueueStatus</code>) seguidas de un evento <code>*Complete</code>. Usa <code>send_action_and_wait_all()</code> para recolectarlos todos:</p>
+  <pre><code>import asyncio
+from asyncio_manager import Manager
+
+async def main():
+    async with Manager(
+        host="127.0.0.1",
+        username="admin",
+        secret="password",
+    ) as manager:
+        await manager.connect()
+
+        messages = await manager.send_action_and_wait_all({
+            "Action": "QueueStatus",
+            "Queue": "support",
+        })
+
+        print(f"Recibidos {len(messages)} mensajes:")
+        for msg in messages:
+            if msg.is_event:
+                print(f"  {msg.event_type}: {dict(msg)}")
+
+asyncio.run(main())</code></pre>
+</section>
+
+<!-- CLI -->
+<section id="cli">
+  <h2>CLI (Interfaz de línea de comandos)</h2>
+  <p>El paquete incluye un comando <code>asyncio-manager</code> para operaciones rápidas desde la terminal:</p>
+
+  <div class="card">
+    <h4>Enviar una acción</h4>
+    <pre><code>asyncio-manager --username admin --secret password action Ping</code></pre>
+  </div>
+
+  <div class="card">
+    <h4>Originar llamada</h4>
+    <pre><code>asyncio-manager --username admin --secret password \
+    originate SIP/100 200 --caller-id "Test &lt;1234&gt;"</code></pre>
+  </div>
+
+  <div class="card">
+    <h4>Monitorear eventos</h4>
+    <pre><code>asyncio-manager --username admin --secret password \
+    monitor --filter "NewChannel"</code></pre>
+  </div>
+
+  <div class="card">
+    <h4>Ejecutar comando Asterisk</h4>
+    <pre><code>asyncio-manager --username admin --secret password \
+    command "pjsip show endpoints"</code></pre>
+  </div>
+</section>
+
+<!-- API RAPIDA -->
+<section id="api">
+  <h2>Referencia rápida de API</h2>
+
+  <h3>Manager</h3>
+  <table>
+    <tr><th>Método</th><th>Descripción</th></tr>
+    <tr><td><code>connect()</code></td><td>Conecta y autentica contra Asterisk</td></tr>
+    <tr><td><code>close()</code></td><td>Cierra la conexión</td></tr>
+    <tr><td><code>send_action(action, *, timeout, as_list)</code></td><td>Envía acción AMI y espera respuesta</td></tr>
+    <tr><td><code>send_action_and_wait_all(action, *, timeout)</code></td><td>Envía acción y recolecta EventList</td></tr>
+    <tr><td><code>originate(channel, exten, ...)</code></td><td>Helper para originar llamadas</td></tr>
+    <tr><td><code>command(cmd)</code></td><td>Ejecuta comando CLI de Asterisk</td></tr>
+    <tr><td><code>register_event(pattern)</code></td><td>Decorador para callbacks de eventos</td></tr>
+  </table>
+
+  <h3>Message</h3>
+  <table>
+    <tr><th>Propiedad</th><th>Descripción</th></tr>
+    <tr><td><code>is_response</code></td><td>¿Es respuesta a una acción?</td></tr>
+    <tr><td><code>is_event</code></td><td>¿Es un evento?</td></tr>
+    <tr><td><code>is_success</code></td><td>¿Fue exitoso?</td></tr>
+    <tr><td><code>action_id</code></td><td>ID de acción correlacionada</td></tr>
+    <tr><td><code>event_type</code></td><td>Tipo de evento (ej: NewChannel)</td></tr>
+    <tr><td><code>is_complete_event</code></td><td>¿Es *Complete (fin de EventList)?</td></tr>
+  </table>
+
+  <h3>CallManager / Call</h3>
+  <table>
+    <tr><th>Método</th><th>Descripción</th></tr>
+    <tr><td><code>CallManager.originate(channel, exten, ...)</code></td><td>Originar y obtener objeto Call</td></tr>
+    <tr><td><code>Call.wait_for_answer(timeout)</code></td><td>Esperar que respondan</td></tr>
+    <tr><td><code>Call.wait_for_hangup(timeout)</code></td><td>Esperar que cuelguen</td></tr>
+    <tr><td><code>Call.transfer(exten, context)</code></td><td>Transferir llamada</td></tr>
+    <tr><td><code>Call.hangup()</code></td><td>Colgar llamada</td></tr>
+  </table>
+</section>
+
+<!-- MIGRACION -->
+<section id="migracion">
+  <h2>Migración desde Panoramisk</h2>
+
+  <table>
+    <tr><th>Panoramisk (deprecado)</th><th>asyncio-manager</th></tr>
+    <tr><td><code>loop = asyncio.get_event_loop()</code></td><td><code>asyncio.run(main())</code></td></tr>
+    <tr><td><code>manager = Manager(loop=loop)</code></td><td><code>async with Manager() as m:</code></td></tr>
+    <tr><td><code>asyncio.coroutine()</code> (roto en 3.11+)</td><td>Solo <code>async def</code></td></tr>
+    <tr><td><code>yaml.load()</code> (inseguro)</td><td><code>yaml.safe_load()</code></td></tr>
+    <tr><td>Reconexión fija 2s infinita</td><td>Backoff exponencial + jitter + límite</td></tr>
+    <tr><td>Action hereda de Future + CaseInsensitiveDict</td><td>Action con composición (Future interno)</td></tr>
+    <tr><td>Heurística multi/completed</td><td>EventList explícito con <code>send_action_and_wait_all()</code></td></tr>
+    <tr><td>Sin type hints</td><td>100% type hints, <code>mypy --strict</code></td></tr>
+  </table>
+
+  <p>Ejemplo de migración:</p>
+  <pre><code># ANTES (Panoramisk)
+loop = asyncio.get_event_loop()
+manager = Manager(loop=loop, host='...')
+manager.connect()
+
+# DESPUÉS (asyncio-manager)
+async with Manager(host='...') as manager:
+    await manager.connect()</code></pre>
+
+  <table>
+    <tr><th>Panoramisk</th><th>asyncio-manager</th></tr>
+    <tr><td><code>from panoramisk import Manager</code></td><td><code>from asyncio_manager import Manager</code></td></tr>
+    <tr><td><code>from panoramisk.fast_agi import Application</code></td><td><code>from asyncio_manager import FastAGIServer</code></td></tr>
+    <tr><td><code>from panoramisk import CallManager</code></td><td><code>from asyncio_manager import CallManager</code></td></tr>
+  </table>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <h2>FAQ / Troubleshooting</h2>
+
+  <div class="card">
+    <h4>ConnectionError: No se puede conectar</h4>
+    <p>Verifica que Asterisk esté corriendo (<code>systemctl status asterisk</code>) y el puerto AMI (5038) sea accesible (<code>netstat -tlnp | grep 5038</code>).</p>
+  </div>
+
+  <div class="card">
+    <h4>AuthenticationError: Credenciales inválidas</h4>
+    <p>Revisa <code>/etc/asterisk/manager.conf</code> y asegúrate de que el usuario tenga permisos de lectura/escritura.</p>
+  </div>
+
+  <div class="card">
+    <h4>TimeoutError: La operación excedió el tiempo de espera</h4>
+    <p>Aumenta los timeouts en la creación del Manager o al enviar la acción:</p>
+    <pre><code>Manager(timeout=15.0, read_timeout=60.0, connect_timeout=30.0)</code></pre>
+  </div>
+
+  <div class="card">
+    <h4>¿Cómo verifico que la librería funciona sin Asterisk real?</h4>
+    <p>Usa los tests unitarios:</p>
+    <pre><code>pip install -e ".[dev]"
+python -m pytest tests/ -v</code></pre>
+  </div>
+</section>
+
+<footer>
+  <p>asyncio-manager v1.0.0 — <a href="https://github.com/anomalyco/asyncio-manager">GitHub</a> — MIT License</p>
+</footer>
+
+</main>
+</body>
+</html>
