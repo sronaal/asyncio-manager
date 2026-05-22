@@ -1,36 +1,39 @@
 # asyncio-manager
 
-Cliente AMI (Asterisk Manager Interface) asíncrono moderno para Python 3.10+.
-Reemplazo moderno de la librería Panoramisk (deprecada).
+Modern async Asterisk Manager Interface (AMI) client for Python 3.10+.
+A drop-in replacement for the deprecated Panoramisk library.
 
-## Características
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/asyncio-manager/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-- ✨ **Async/await moderno** — sin `get_event_loop()` deprecado
-- 🔒 **Cero dependencias externas** — solo librería estándar de Python
-- 📝 **Type hints completos** — compatible con `mypy --strict`
+## Features
+
+- ✨ **Modern async/await** — no deprecated `get_event_loop()`
+- 🔒 **Zero external dependencies** — stdlib only
+- 📝 **Full type hints** — ready for `mypy --strict`
 - 🔄 **Context manager** — `async with Manager(...) as m:`
-- ⏱️ **Timeouts configurables** — connect, read, action timeouts
-- 🔁 **Reconexión inteligente** — backoff exponencial con jitter
-- 📋 **Soporte EventList** — recolecta eventos hasta `*Complete`
-- 📞 **CallManager** — seguimiento de llamadas individuales
-- 🎙️ **FastAGI** — servidor AGI asíncrono (sin `asyncio.coroutine()`)
-- 🔐 **SSL/TLS** — conexiones seguras
+- ⏱️ **Configurable timeouts** — connect, read, action
+- 🔁 **Smart reconnection** — exponential backoff with jitter
+- 📋 **EventList support** — collect events until `*Complete`
+- 📞 **Call tracking** — `CallManager` + `Call` individual lifecycle
+- 🎙️ **FastAGI** — async AGI server (no `asyncio.coroutine()`)
+- 🔐 **SSL/TLS** — secure connections
 - 🐍 **Python 3.10, 3.11, 3.12, 3.13+**
 - 📞 **Asterisk 20, 21, 22+**
 
-## Instalación
+## Installation
 
 ```bash
 pip install asyncio-manager
 ```
 
-### Dependencias de desarrollo
+With dev dependencies:
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-## Uso rápido
+## Quick Start
 
 ```python
 import asyncio
@@ -46,10 +49,10 @@ async def main():
 
         @manager.register_event("*")
         async def on_event(message):
-            print(f"Evento: {message.event_type}")
+            print(f"Event: {message.event_type}")
 
         response = await manager.send_action({"Action": "Ping"})
-        print(f"Ping: {response.is_success}")
+        print(f"Ping success: {response.is_success}")
 
         try:
             while True:
@@ -60,47 +63,77 @@ async def main():
 asyncio.run(main())
 ```
 
-## Documentación
+### From config file
 
-La documentación completa está disponible en [docs/](docs/):
+```python
+from asyncio_manager import Manager, ManagerConfig
 
-- [Instalación](docs/installation.md)
-- [Primeros pasos](docs/getting_started.md)
-- [Referencia de API](docs/api_reference.md)
-- [Ejemplos](docs/examples.md)
-- [Solución de problemas](docs/troubleshooting.md)
-- [Migración desde Panoramisk](docs/migration_from_panoramisk.md)
+config = ManagerConfig.from_file("config.ini")
+
+async with Manager(config=config) as manager:
+    await manager.connect()
+```
+
+### From environment variables
+
+```python
+from asyncio_manager import Manager, ManagerConfig
+
+config = ManagerConfig.from_env()
+async with Manager(config=config) as manager:
+    await manager.connect()
+```
 
 ## CLI
 
 ```bash
-# Enviar acción Ping
+# Send a Ping action
 asyncio-manager --username admin --secret password action Ping
 
-# Originar llamada
+# Originate a call
 asyncio-manager originate SIP/100 200 --caller-id "Test <1234>"
 
-# Monitorear eventos
+# Monitor events
 asyncio-manager monitor --filter "NewChannel"
 
-# Ejecutar comando Asterisk
+# Run an Asterisk CLI command
 asyncio-manager command "pjsip show endpoints"
 ```
 
-## Ejemplos
+## Examples
 
-Ver [examples/](examples/) para ejemplos completos:
+See [examples/](examples/) for complete working examples:
 
-- `basic_listener.py` — Listener de eventos
-- `call_origination.py` — Originar llamadas concurrentes
-- `fast_agi_server.py` — Servidor IVR con FastAGI
-- `call_manager_usage.py` — Ciclo de vida de llamadas
-- `queue_management.py` — Monitoreo de colas
+- `basic_listener.py` — Event listener with callbacks
+- `call_origination.py` — Concurrent call origination
+- `fast_agi_server.py` — IVR server with FastAGI
+- `call_manager_usage.py` — Call lifecycle management
+- `queue_management.py` — Queue monitoring and EventList
 
-## Migración desde Panoramisk
+## Documentation
 
-Ver [docs/migration_from_panoramisk.md](docs/migration_from_panoramisk.md).
+Full documentation is available in [docs/](docs/):
 
-## Licencia
+- [Installation](docs/installation.md)
+- [Getting Started](docs/getting_started.md)
+- [API Reference](docs/api_reference.md)
+- [Examples](docs/examples.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [Migration from Panoramisk](docs/migration_from_panoramisk.md)
+
+## Migration from Panoramisk
+
+| Panoramisk (deprecated) | asyncio-manager |
+|---|---|
+| `loop = asyncio.get_event_loop()` | `asyncio.run(main())` |
+| `manager = Manager(loop=loop)` | `async with Manager() as m:` |
+| `asyncio.coroutine()` (broken on 3.11+) | Native `async def` only |
+| `yaml.load()` (unsafe) | `yaml.safe_load()` |
+| Infinite fixed 2s reconnection | Exponential backoff + jitter + limit |
+| Dual inheritance (Future + Dict) | Composition (internal Future) |
+| Fragile multi/completed heuristic | Explicit EventList `send_action_and_wait_all()` |
+| No type hints | 100% type hints, `mypy --strict` |
+
+## License
 
 MIT

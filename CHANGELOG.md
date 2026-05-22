@@ -1,21 +1,21 @@
 # Changelog
 
-## 1.0.0 (2024)
+## 1.0.0 (2025)
 
-### Primera versión estable
+### First stable release
 
-- ✨ Manager con context manager (`async with`)
-- ✨ Reconexión inteligente con backoff exponencial y jitter
-- ✨ Timeouts configurables (connect, read, action)
-- ✨ Autenticación MD5 challenge-response y plain text
-- ✨ Eventos con patrones wildcard (`*`, `NewChannel`, `Queue*`)
-- ✨ Action con composición (no herencia dual como Panoramisk)
-- ✨ Soporte EventList (`send_action_and_wait_all`)
-- ✨ CallManager con tracking de llamadas individuales
-- ✨ FastAGI server (sin `asyncio.coroutine()` deprecado)
-- ✨ CLI con argparse y `yaml.safe_load()`
-- ✨ Cero dependencias externas
-- ✨ Type hints completos (`mypy --strict`)
-- ✨ Tests unitarios (90+ tests)
-- ✨ Documentación en Markdown + Sphinx
-- ✨ CI/CD con GitHub Actions (black, flake8, mypy, pytest)
+- ✨ Manager with context manager (`async with`)
+- ✨ Smart reconnection with exponential backoff and jitter
+- ✨ Configurable timeouts (connect, read, action)
+- ✨ MD5 challenge-response and plain text authentication
+- ✨ Event callbacks with wildcard patterns (`*`, `NewChannel`, `Queue*`)
+- ✨ Action with composition pattern (no dual inheritance)
+- ✨ EventList support (`send_action_and_wait_all`)
+- ✨ CallManager with individual call tracking
+- ✨ FastAGI server (no deprecated `asyncio.coroutine()`)
+- ✨ CLI with argparse and `yaml.safe_load()`
+- ✨ Zero external dependencies
+- ✨ Full type hints (`mypy --strict`)
+- ✨ 89+ unit tests
+- ✨ Documentation in English and Spanish
+- ✨ CI/CD with GitHub Actions (black, flake8, mypy, pytest)
